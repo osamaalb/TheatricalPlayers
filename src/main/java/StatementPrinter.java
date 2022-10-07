@@ -2,10 +2,14 @@ import java.text.NumberFormat;
 import java.util.*;
 
 public class StatementPrinter {
-
-  public String print(Invoice invoice, HashMap<String, Play> plays) {
+  public enum printFormat {
+    TEXT,
+    HTML
+  }
+  public String print(Invoice invoice, HashMap<String, Play> plays, printFormat format) {
     int totalAmount = 0;
     int volumeCredits = 0;
+    List<InvoiceItem> invoiceItems = new ArrayList<InvoiceItem>();
     String result = String.format("Statement for %s\n", invoice.customer);
 
     NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
@@ -32,6 +36,7 @@ public class StatementPrinter {
           throw new Error("unknown type: ${play.type}");
       }
 
+      invoiceItems.add(new InvoiceItem(play.name, thisAmount, perf.audience));
       // add volume credits
       volumeCredits += Math.max(perf.audience - 30, 0);
       // add extra credit for every ten comedy attendees
@@ -45,5 +50,4 @@ public class StatementPrinter {
     result += String.format("You earned %s credits\n", volumeCredits);
     return result;
   }
-
 }
