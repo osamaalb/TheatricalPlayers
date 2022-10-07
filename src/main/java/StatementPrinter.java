@@ -50,4 +50,15 @@ public class StatementPrinter {
     result += String.format("You earned %s credits\n", volumeCredits);
     return result;
   }
+
+  public String printText(Invoice invoice, HashMap<String, Play> plays, int totalAmount, int volumeCredits, List<InvoiceItem> invoiceItems) {
+    String result = String.format("Statement for %s\n", invoice.customer);
+    NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
+    for (InvoiceItem invoiceItem : invoiceItems){
+      result += String.format("  %s: %s (%s seats)\n", invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);
+    }
+    result += String.format("Amount owed is %s\n", frmt.format(totalAmount / 100));
+    result += String.format("You earned %s credits\n", volumeCredits);
+    return result;
+  }
 }
