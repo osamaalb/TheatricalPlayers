@@ -173,7 +173,7 @@
         </module>
         <module name="NoClone"/>
         <module name="NoFinalizer"/>
-        <module name="RedundantThrows"/>
+        <!--<module name="RedundantThrows"/>-->
         <module name="OneStatementPerLine"/>
         <module name="OverloadMethodsDeclarationOrder"/>
         <module name="PackageDeclaration"/>
