@@ -17,10 +17,6 @@ public final class Invoice {
     this.performances = performances;
   }
 
-  public enum PrintFormat {
-    TEXT,
-    HTML
-  }
   public String print(HashMap<String, Play> plays, PrintFormat format) {
     this.calculateInvoice(plays);
     switch (format) {
