@@ -3,14 +3,14 @@ import java.util.*;
 
 public class Invoice {
 
-  public String customer;
-  public List<Performance> performances;
+  private String customer;
+  private List<Performance> performances;
 
-  public List<InvoiceItem> invoiceItems;
+  private List<InvoiceItem> invoiceItems;
 
-  public int totalInvoiceAmount;
+  private int totalInvoiceAmount;
 
-  public int volumeCredits;
+  private int volumeCredits;
 
   public Invoice(String customer, List<Performance> performances) {
     this.customer = customer;
@@ -51,5 +51,28 @@ public class Invoice {
 
       totalInvoiceAmount += thisAmount;
     }
+  }
+  public String printText() {
+    String result = String.format("Statement for %s\n", this.customer);
+    NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
+    for (InvoiceItem invoiceItem : this.invoiceItems){
+      result += String.format("  %s: %s (%s seats)\n", invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);
+    }
+    result += String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount / 100));
+    result += String.format("You earned %s credits\n", this.volumeCredits);
+    return result;
+  }
+
+  public String printHTML() {
+    String result = String.format("<h3>Statement for %s</h3>\n", this.customer);
+    result += String.format("<ul>\n");
+    NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
+    for (InvoiceItem invoiceItem : this.invoiceItems){
+      result += String.format("<li>%s: %s (%s seats)</li>\n", invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);
+    }
+    result += String.format("</ul>\n");
+    result += String.format("<p>Amount owed is <strong>%s</strong></br>\n", frmt.format(this.totalInvoiceAmount / 100));
+    result += String.format("<p>You earned <strong>%s</strong> credits</p>\n", this.volumeCredits);
+    return result;
   }
 }
