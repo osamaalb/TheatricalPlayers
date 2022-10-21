@@ -22,8 +22,7 @@ public class StatementPrinterTests {
                 new Performance("as-like", 35),
                 new Performance("othello", 40)));
 
-        StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.print(invoice, plays, StatementPrinter.PrintFormat.TEXT);
+        var result = invoice.print(plays, Invoice.PrintFormat.TEXT);
 
         verify(result);
     }
@@ -39,9 +38,8 @@ public class StatementPrinterTests {
                 new Performance("henry-v", 53),
                 new Performance("as-like", 55)));
 
-        StatementPrinter statementPrinter = new StatementPrinter();
         Assertions.assertThrows(Error.class, () -> {
-            statementPrinter.print(invoice, plays, StatementPrinter.PrintFormat.TEXT);
+            invoice.print(plays, Invoice.PrintFormat.TEXT);
         });
     }
 
@@ -58,8 +56,7 @@ public class StatementPrinterTests {
                 new Performance("as-like", 20),
                 new Performance("othello", 40)));
 
-        StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.print(invoice, plays, StatementPrinter.PrintFormat.TEXT);
+        var result = invoice.print(plays, Invoice.PrintFormat.TEXT);
 
         verify(result);
     }
@@ -77,8 +74,7 @@ public class StatementPrinterTests {
                 new Performance("as-like", 20),
                 new Performance("othello", 40)));
 
-        StatementPrinter statementPrinter = new StatementPrinter();
-        var result = statementPrinter.print(invoice, plays, StatementPrinter.PrintFormat.HTML);
+        var result = invoice.print(plays, Invoice.PrintFormat.HTML);
 
         verify(result);
     }

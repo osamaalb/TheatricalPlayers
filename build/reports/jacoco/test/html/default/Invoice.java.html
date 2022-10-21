@@ -1,13 +1,81 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TheatricalPlayers</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">import java.util.*;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TheatricalPlayers</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">import java.text.NumberFormat;
+import java.util.*;
 
 public class Invoice {
 
-  public String customer;
-  public List&lt;Performance&gt; performances;
+  private String customer;
+  private List&lt;Performance&gt; performances;
 
-<span class="fc" id="L8">  public Invoice(String customer, List&lt;Performance&gt; performances) {</span>
-<span class="fc" id="L9">    this.customer = customer;</span>
-<span class="fc" id="L10">    this.performances = performances;</span>
-<span class="fc" id="L11">  }</span>
+  private List&lt;InvoiceItem&gt; invoiceItems;
+
+  private int totalInvoiceAmount;
+
+  private int volumeCredits;
+
+<span class="nc" id="L15">  public Invoice(String customer, List&lt;Performance&gt; performances) {</span>
+<span class="nc" id="L16">    this.customer = customer;</span>
+<span class="nc" id="L17">    this.performances = performances;</span>
+<span class="nc" id="L18">  }</span>
+
+  public void CalculateInvoice(HashMap&lt;String, Play&gt; plays) {
+<span class="nc" id="L21">    this.volumeCredits = 0;</span>
+<span class="nc" id="L22">    this.totalInvoiceAmount = 0;</span>
+<span class="nc" id="L23">    this.invoiceItems = new ArrayList&lt;InvoiceItem&gt;();</span>
+<span class="nc bnc" id="L24" title="All 2 branches missed.">    for (Performance perf : this.performances) {</span>
+<span class="nc" id="L25">      Play play = plays.get(perf.playID);</span>
+<span class="nc" id="L26">      int thisAmount = 0;</span>
+
+<span class="nc bnc" id="L28" title="All 3 branches missed.">      switch (play.type) {</span>
+        case &quot;tragedy&quot;:
+<span class="nc" id="L30">          thisAmount = 40000;</span>
+<span class="nc bnc" id="L31" title="All 2 branches missed.">          if (perf.audience &gt; 30) {</span>
+<span class="nc" id="L32">            thisAmount += 1000 * (perf.audience - 30);</span>
+          }
+          break;
+        case &quot;comedy&quot;:
+<span class="nc" id="L36">          thisAmount = 30000;</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">          if (perf.audience &gt; 20) {</span>
+<span class="nc" id="L38">            thisAmount += 10000 + 500 * (perf.audience - 20);</span>
+          }
+<span class="nc" id="L40">          thisAmount += 300 * perf.audience;</span>
+<span class="nc" id="L41">          break;</span>
+        default:
+<span class="nc" id="L43">          throw new Error(&quot;unknown type: ${play.type}&quot;);</span>
+      }
+
+<span class="nc" id="L46">      invoiceItems.add(new InvoiceItem(play.name, thisAmount, perf.audience));</span>
+      // add volume credits
+<span class="nc" id="L48">      volumeCredits += Math.max(perf.audience - 30, 0);</span>
+      // add extra credit for every ten comedy attendees
+<span class="nc bnc" id="L50" title="All 2 branches missed.">      if (&quot;comedy&quot;.equals(play.type)) {</span>
+<span class="nc" id="L51">        volumeCredits += Math.floor(perf.audience / 5);</span>
+      }
+
+<span class="nc" id="L54">      totalInvoiceAmount += thisAmount;</span>
+<span class="nc" id="L55">    }</span>
+<span class="nc" id="L56">  }</span>
+  public String printText() {
+<span class="nc" id="L58">    String result = String.format(&quot;Statement for %s\n&quot;, this.customer);</span>
+<span class="nc" id="L59">    final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);</span>
+<span class="nc bnc" id="L60" title="All 2 branches missed.">    for (InvoiceItem invoiceItem : this.invoiceItems){</span>
+<span class="nc" id="L61">      result += String.format(&quot;  %s: %s (%s seats)\n&quot;, invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);</span>
+<span class="nc" id="L62">    }</span>
+<span class="nc" id="L63">    result += String.format(&quot;Amount owed is %s\n&quot;, frmt.format(this.totalInvoiceAmount / 100));</span>
+<span class="nc" id="L64">    result += String.format(&quot;You earned %s credits\n&quot;, this.volumeCredits);</span>
+<span class="nc" id="L65">    return result;</span>
+  }
+
+  public String printHTML() {
+<span class="nc" id="L69">    String result = String.format(&quot;&lt;h3&gt;Statement for %s&lt;/h3&gt;\n&quot;, this.customer);</span>
+<span class="nc" id="L70">    result += String.format(&quot;&lt;ul&gt;\n&quot;);</span>
+<span class="nc" id="L71">    NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">    for (InvoiceItem invoiceItem : this.invoiceItems){</span>
+<span class="nc" id="L73">      result += String.format(&quot;&lt;li&gt;%s: %s (%s seats)&lt;/li&gt;\n&quot;, invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);</span>
+<span class="nc" id="L74">    }</span>
+<span class="nc" id="L75">    result += String.format(&quot;&lt;/ul&gt;\n&quot;);</span>
+<span class="nc" id="L76">    result += String.format(&quot;&lt;p&gt;Amount owed is &lt;strong&gt;%s&lt;/strong&gt;&lt;/br&gt;\n&quot;, frmt.format(this.totalInvoiceAmount / 100));</span>
+<span class="nc" id="L77">    result += String.format(&quot;&lt;p&gt;You earned &lt;strong&gt;%s&lt;/strong&gt; credits&lt;/p&gt;\n&quot;, this.volumeCredits);</span>
+<span class="nc" id="L78">    return result;</span>
+  }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
