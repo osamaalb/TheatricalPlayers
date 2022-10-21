@@ -6,11 +6,11 @@ public final class Invoice {
   public String customer;
   public List<Performance> performances;
 
-  public List<InvoiceItem> invoiceItems;
-
   private int totalInvoiceAmount;
 
   private int volumeCredits;
+
+  final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
   public Invoice(String customer, List<Performance> performances) {
     this.customer = customer;
@@ -21,9 +21,9 @@ public final class Invoice {
     this.calculateInvoice(plays);
     switch (format) {
       case TEXT:
-        return this.printText();
+        return this.printText(plays);
       case HTML:
-        return this.printHTML();
+        return this.printHTML(plays);
       default:
         throw new Error("unknown print format: ${format}");
     }
@@ -33,25 +33,21 @@ public final class Invoice {
     final String comedy = "comedy";
     this.volumeCredits = 0;
     this.totalInvoiceAmount = 0;
-    this.invoiceItems = new ArrayList<InvoiceItem>();
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
-      int thisAmount = 0;
-      thisAmount += play.getPrice(perf.audience);
-      invoiceItems.add(new InvoiceItem(play.name, thisAmount, perf.audience));
       volumeCredits += play.getCredits(perf.audience);
-      totalInvoiceAmount += thisAmount;
+      totalInvoiceAmount += play.getPrice(perf.audience);
     }
   }
-  private String printText() {
+  private String printText(HashMap<String, Play> plays) {
     String result = String.format("Statement for %s\n", this.customer);
-    final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-    for (InvoiceItem invoiceItem : this.invoiceItems) {
+    for (Performance perf : this.performances) {
+      final Play play = plays.get(perf.playID);
       result += String.format(
               "  %s: %s (%s seats)\n",
-              invoiceItem.name,
-              frmt.format(invoiceItem.amount / 100),
-              invoiceItem.audience
+              play.name,
+              frmt.format(play.getPrice(perf.audience) / 100),
+              perf.audience
       );
     }
     result += String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount / 100));
@@ -59,16 +55,16 @@ public final class Invoice {
     return result;
   }
 
-  private String printHTML() {
+  private String printHTML(HashMap<String, Play> plays) {
     String result = String.format("<h3>Statement for %s</h3>\n", this.customer);
     result += String.format("<ul>\n");
-    final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
-    for (InvoiceItem invoiceItem : this.invoiceItems) {
+    for (Performance perf : this.performances) {
+      final Play play = plays.get(perf.playID);
       result += String.format(
               "<li>%s: %s (%s seats)</li>\n",
-              invoiceItem.name,
-              frmt.format(invoiceItem.amount / 100),
-              invoiceItem.audience
+              play.name,
+              frmt.format(play.getPrice(perf.audience) / 100),
+              perf.audience
       );
     }
     result += String.format("</ul>\n");
