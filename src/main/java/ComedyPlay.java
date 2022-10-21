@@ -1,14 +1,13 @@
 public class ComedyPlay extends Play {
     public ComedyPlay(String name) {
-        this.name = name;
-        this.type = "comedy";
+      this.name = name;
     }
 
     public int getPrice(int audience) {
-        return 30000 + 300 * audience + ((audience > 20) ? 10000 + 500 * (audience - 20) : 0);
+      return 30000 + 300 * audience + ((audience > 20) ? 10000 + 500 * (audience - 20) : 0);
     }
 
     public int getCredits(int audience) {
-        return Math.max(audience - 30, 0) + (int)Math.floor(audience / 5);
+      return Math.max(audience - 30, 0) + (int)Math.floor(audience / 5);
     }
 }
