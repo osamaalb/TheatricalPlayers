@@ -37,33 +37,9 @@ public final class Invoice {
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
       int thisAmount = 0;
-
-      switch (play.type) {
-        case tragedy:
-          thisAmount = 40000;
-          if (perf.audience > 30) {
-            thisAmount += 1000 * (perf.audience - 30);
-          }
-          break;
-        case comedy:
-          thisAmount = 30000;
-          if (perf.audience > 20) {
-            thisAmount += 10000 + 500 * (perf.audience - 20);
-          }
-          thisAmount += 300 * perf.audience;
-          break;
-        default:
-          throw new Error("unknown type: ${play.type}");
-      }
-
+      thisAmount += play.getPrice(perf.audience);
       invoiceItems.add(new InvoiceItem(play.name, thisAmount, perf.audience));
-      // add volume credits
-      volumeCredits += Math.max(perf.audience - 30, 0);
-      // add extra credit for every ten comedy attendees
-      if (play.type.equals(comedy)) {
-        volumeCredits += Math.floor(perf.audience / 5);
-      }
-
+      volumeCredits += play.getCredits(perf.audience);
       totalInvoiceAmount += thisAmount;
     }
   }

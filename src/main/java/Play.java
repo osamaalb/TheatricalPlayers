@@ -8,4 +8,8 @@ public abstract class Play {
   public Play(String name) {
     this.name = name;
   }
+
+  public abstract int getPrice(int audience);
+
+  public abstract int getCredits(int audience);
 }

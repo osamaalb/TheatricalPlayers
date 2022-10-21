@@ -4,11 +4,11 @@ public class ComedyPlay extends Play {
         this.type = "comedy";
     }
 
-    public int getPrice() {
-        return 0;
+    public int getPrice(int audience) {
+        return 30000 + 300 * audience + ((audience > 20) ? 10000 + 500 * (audience - 20) : 0);
     }
 
-    public int getCredits() {
-        return 0;
+    public int getCredits(int audience) {
+        return Math.max(audience - 30, 0) + (int)Math.floor(audience / 5);
     }
 }

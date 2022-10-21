@@ -4,11 +4,11 @@ public class TragedyPlay extends Play {
         this.type = "tragedy";
     }
 
-    public int getPrice() {
-        return 0;
+    public int getPrice(int audience) {
+        return 40000 + ((audience > 30) ? 1000 * (audience - 30) : 0);
     }
 
-    public int getCredits() {
-        return 0;
+    public int getCredits(int audience) {
+        return Math.max(audience - 30, 0);
     }
 }
