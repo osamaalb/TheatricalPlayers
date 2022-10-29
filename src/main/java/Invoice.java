@@ -73,7 +73,7 @@ public final class Invoice {
   private String printHTML(HashMap<String, Play> plays) {
     String result = "";
     try {
-       result = Files.readString(Paths.get(getClass().getResource("InvoiceTemplates\\HTMLTemplate.html").toURI()));
+      result = Files.readString(Paths.get(getClass().getResource("InvoiceTemplates\\HTMLTemplate.html").toURI()));
     } catch (Exception e) {
       throw new Error("Cannot read invoice template");
     }
@@ -82,11 +82,11 @@ public final class Invoice {
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
       invoiceItems.append(String.format(
-              "<tr>\n" +
-              "<td>%s</td>\n" +
-              "<td>%s</td>\n" +
-              "<td>%s</td>\n" +
-              "</tr>\n",
+              "<tr>\n"
+              + "<td>%s</td>\n"
+              + "<td>%s</td>\n"
+              + "<td>%s</td>\n"
+              + "</tr>\n",
               play.name,
               perf.audience,
               frmt.format(play.getPrice(perf.audience))
@@ -98,10 +98,10 @@ public final class Invoice {
     result = result.replace("{@Invoice_Amount}", frmt.format(this.totalInvoiceAmount));
     result = result.replace("{@Total_Credits}", Integer.toString(this.volumeCredits));
     if (this.fidelityDiscount > 0) {
-      result = result.replace("{@Fidelity_Discount}", String.format("<tr>\n" +
-              "<td colspan=\"2\" style=\"text-align: right;\"><strong>Fidelity Discount:</strong></td>\n" +
-              "<td>%s</td>\n" +
-              "</tr>", frmt.format(this.fidelityDiscount)));
+      result = result.replace("{@Fidelity_Discount}", String.format("<tr>\n"
+              + "<td colspan=\"2\" style=\"text-align: right;\"><strong>Fidelity Discount:</strong></td>\n"
+              + "<td>%s</td>\n"
+              + "</tr>", frmt.format(this.fidelityDiscount)));
     } else {
       result = result.replace("{@Fidelity_Discount}", "");
     }

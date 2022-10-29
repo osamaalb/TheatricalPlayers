@@ -48,7 +48,7 @@ padding: 5px;
 <td>14</td>
 </tr>
 <tr>
-<td colspan="2" style="text-align: right;"><strong>Accumulated Fidelity Points:</strong></td>
+<td colspan="2" style="text-align: right;"><strong>New Fidelity Points Balance:</strong></td>
 <td>0</td>
 </tr>
 </table>
