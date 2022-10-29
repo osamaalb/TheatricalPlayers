@@ -17,7 +17,7 @@ public class StatementPrinterTests {
         plays.put("as-like",  new ComedyPlay("As You Like It"));
         plays.put("othello",  new TragedyPlay("Othello"));
 
-        Invoice invoice = new Invoice("BigCo", List.of(
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 0), List.of(
                 new Performance("hamlet", 55),
                 new Performance("as-like", 35),
                 new Performance("othello", 40)));
@@ -51,7 +51,7 @@ public class StatementPrinterTests {
         plays.put("as-like",  new ComedyPlay("As You Like It"));
         plays.put("othello",  new TragedyPlay("Othello"));
 
-        Invoice invoice = new Invoice("BigCo", List.of(
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 0), List.of(
                 new Performance("hamlet", 30),
                 new Performance("as-like", 20),
                 new Performance("othello", 40)));
@@ -69,7 +69,7 @@ public class StatementPrinterTests {
         plays.put("as-like",  new ComedyPlay("As You Like It"));
         plays.put("othello",  new TragedyPlay("Othello"));
 
-        Invoice invoice = new Invoice("BigCo", List.of(
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 0), List.of(
                 new Performance("hamlet", 30),
                 new Performance("as-like", 20),
                 new Performance("othello", 40)));

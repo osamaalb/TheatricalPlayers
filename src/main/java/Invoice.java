@@ -5,7 +5,7 @@ import java.util.*;
 
 public final class Invoice {
 
-  public String customer;
+  public Customer customer;
   public List<Performance> performances;
 
   private float totalInvoiceAmount;
@@ -14,7 +14,7 @@ public final class Invoice {
 
   final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
-  public Invoice(String customer, List<Performance> performances) {
+  public Invoice(Customer customer, List<Performance> performances) {
     this.customer = customer;
     this.performances = performances;
   }
@@ -42,7 +42,7 @@ public final class Invoice {
     }
   }
   private String printText(HashMap<String, Play> plays) {
-    StringBuffer result = new StringBuffer(String.format("Statement for %s\n", this.customer));
+    StringBuffer result = new StringBuffer(String.format("Statement for %s\n", this.customer.name));
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
       result.append(String.format(
@@ -80,7 +80,7 @@ public final class Invoice {
       ));
     }
 
-    result = result.replace("{@Customer_Name}", this.customer);
+    result = result.replace("{@Customer_Name}", this.customer.name);
     result = result.replace("{@Invoice_Items}", invoiceItems.toString());
     result = result.replace("{@Invoice_Amount}", frmt.format(this.totalInvoiceAmount));
     result = result.replace("{@Total_Credits}", Integer.toString(this.volumeCredits));
