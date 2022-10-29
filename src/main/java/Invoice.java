@@ -1,3 +1,8 @@
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -56,20 +61,31 @@ public final class Invoice {
   }
 
   private String printHTML(HashMap<String, Play> plays) {
-    StringBuffer result = new StringBuffer(String.format("<h3>Statement for %s</h3>\n", this.customer));
-    result.append(String.format("<ul>\n"));
+    String result = "";
+    try {
+       result = Files.readString(Paths.get(getClass().getResource("InvoiceTemplates\\HTMLTemplate.html").toURI()));
+    } catch (Exception e) {
+      throw new Error("Cannot read invoice template");
+    }
+
+    StringBuffer invoiceItems = new StringBuffer();
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
-      result.append(String.format(
-              "<li>%s: %s (%s seats)</li>\n",
+      invoiceItems.append(String.format(
+              "<tr>\n" +
+              "<td>%s</td>\n" +
+              "<td>%s</td>\n" +
+              "<td>%s</td>\n" +
+              "</tr>\n",
               play.name,
-              frmt.format(play.getPrice(perf.audience)),
-              perf.audience
+              perf.audience,
+              frmt.format(play.getPrice(perf.audience))
       ));
     }
-    result.append(String.format("</ul>\n"));
-    result.append(String.format("<p>Amount owed is <strong>%s</strong></br>\n", frmt.format(this.totalInvoiceAmount)));
-    result.append(String.format("<p>You earned <strong>%s</strong> credits</p>\n", this.volumeCredits));
-    return result.toString();
+    result = result.replace("{@Customer_Name}", this.customer);
+    result = result.replace("{@Invoice_Items}", invoiceItems.toString());
+    result = result.replace("{@Invoice_Amount}", frmt.format(this.totalInvoiceAmount));
+    result = result.replace("{@Total_Credits}", Integer.toString(this.volumeCredits));
+    return result;
   }
 }
