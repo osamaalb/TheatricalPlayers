@@ -1,7 +1,4 @@
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
@@ -82,6 +79,7 @@ public final class Invoice {
               frmt.format(play.getPrice(perf.audience))
       ));
     }
+
     result = result.replace("{@Customer_Name}", this.customer);
     result = result.replace("{@Invoice_Items}", invoiceItems.toString());
     result = result.replace("{@Invoice_Amount}", frmt.format(this.totalInvoiceAmount));
