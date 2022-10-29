@@ -4,3 +4,4 @@ Statement for BigCo
   Othello: $500.00 (40 seats)
 Amount owed is $1,260.00
 You earned 14 credits
+Your accumulated fidelity points are 149

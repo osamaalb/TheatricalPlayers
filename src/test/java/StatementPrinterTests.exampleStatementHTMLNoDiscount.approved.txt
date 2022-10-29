@@ -12,26 +12,41 @@ padding: 5px;
 </head>
 <body>
 <h2>Invoice</h2>
-<p><strong>Client:</strong> {@Customer_Name}</p>
+<p><strong>Client:</strong> BigCo</p>
 <table>
 <tr>
 <th>Piece</th>
 <th>Seats Sold</th>
 <th>Price</th>
 </tr>
-{@Invoice_Items}
-{@Fidelity_Discount}
+<tr>
+<td>Hamlet</td>
+<td>30</td>
+<td>$400.00</td>
+</tr>
+<tr>
+<td>As You Like It</td>
+<td>20</td>
+<td>$360.00</td>
+</tr>
+<tr>
+<td>Othello</td>
+<td>40</td>
+<td>$500.00</td>
+</tr>
+
+
 <tr>
 <td colspan="2" style="text-align: right;"><strong>Total Owed:</strong></td>
-<td>{@Invoice_Amount}</td>
+<td>$1,260.00</td>
 </tr>
 <tr>
 <td colspan="2" style="text-align: right;"><strong>Fidelity Points Earned:</strong></td>
-<td>{@Total_Credits}</td>
+<td>14</td>
 </tr>
 <tr>
 <td colspan="2" style="text-align: right;"><strong>Accumulated Fidelity Points:</strong></td>
-<td>{@Accumulated_Credits}</td>
+<td>149</td>
 </tr>
 </table>
 <p>The invoice is due in 30 days</p>

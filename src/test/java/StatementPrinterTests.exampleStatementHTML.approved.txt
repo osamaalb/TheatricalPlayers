@@ -36,12 +36,20 @@ padding: 5px;
 </tr>
 
 <tr>
+<td colspan="2" style="text-align: right;"><strong>Fidelity Discount:</strong></td>
+<td>$15.00</td>
+</tr>
+<tr>
 <td colspan="2" style="text-align: right;"><strong>Total Owed:</strong></td>
-<td>$1,260.00</td>
+<td>$1,245.00</td>
 </tr>
 <tr>
 <td colspan="2" style="text-align: right;"><strong>Fidelity Points Earned:</strong></td>
 <td>14</td>
+</tr>
+<tr>
+<td colspan="2" style="text-align: right;"><strong>Accumulated Fidelity Points:</strong></td>
+<td>0</td>
 </tr>
 </table>
 <p>The invoice is due in 30 days</p>

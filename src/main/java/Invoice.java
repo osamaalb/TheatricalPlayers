@@ -11,6 +11,7 @@ public final class Invoice {
   private float totalInvoiceAmount;
 
   private int volumeCredits;
+  private float fidelityDiscount;
 
   final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);
 
@@ -31,14 +32,22 @@ public final class Invoice {
     }
   }
   private void calculateInvoice(HashMap<String, Play> plays) {
-    final String tragedy = "tragedy";
-    final String comedy = "comedy";
     this.volumeCredits = 0;
     this.totalInvoiceAmount = 0;
+    this.fidelityDiscount = 0;
+
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
       volumeCredits += play.getCredits(perf.audience);
       totalInvoiceAmount += play.getPrice(perf.audience);
+    }
+
+    this.customer.creditsBalance += volumeCredits;
+
+    if (this.customer.creditsBalance >= 150) {
+      fidelityDiscount = 15;
+      totalInvoiceAmount -= fidelityDiscount;
+      this.customer.creditsBalance -= 150;
     }
   }
   private String printText(HashMap<String, Play> plays) {
@@ -52,8 +61,12 @@ public final class Invoice {
               perf.audience
       ));
     }
+    if (this.fidelityDiscount > 0) {
+      result.append(String.format("You earned a fidelity discount of %s\n", frmt.format(this.fidelityDiscount)));
+    }
     result.append(String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount)));
     result.append(String.format("You earned %s credits\n", this.volumeCredits));
+    result.append(String.format("Your accumulated fidelity points are %s\n", this.customer.creditsBalance));
     return result.toString();
   }
 
@@ -84,6 +97,15 @@ public final class Invoice {
     result = result.replace("{@Invoice_Items}", invoiceItems.toString());
     result = result.replace("{@Invoice_Amount}", frmt.format(this.totalInvoiceAmount));
     result = result.replace("{@Total_Credits}", Integer.toString(this.volumeCredits));
+    if (this.fidelityDiscount > 0) {
+      result = result.replace("{@Fidelity_Discount}", String.format("<tr>\n" +
+              "<td colspan=\"2\" style=\"text-align: right;\"><strong>Fidelity Discount:</strong></td>\n" +
+              "<td>%s</td>\n" +
+              "</tr>", frmt.format(this.fidelityDiscount)));
+    } else {
+      result = result.replace("{@Fidelity_Discount}", "");
+    }
+    result = result.replace("{@Accumulated_Credits}", Integer.toString(this.customer.creditsBalance));
     return result;
   }
 }

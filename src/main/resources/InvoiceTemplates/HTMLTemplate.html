@@ -20,6 +20,7 @@ padding: 5px;
 <th>Price</th>
 </tr>
 {@Invoice_Items}
+{@Fidelity_Discount}
 <tr>
 <td colspan="2" style="text-align: right;"><strong>Total Owed:</strong></td>
 <td>{@Invoice_Amount}</td>
@@ -27,6 +28,10 @@ padding: 5px;
 <tr>
 <td colspan="2" style="text-align: right;"><strong>Fidelity Points Earned:</strong></td>
 <td>{@Total_Credits}</td>
+</tr>
+<tr>
+<td colspan="2" style="text-align: right;"><strong>Accumulated Fidelity Points:</strong></td>
+<td>{@Accumulated_Credits}</td>
 </tr>
 </table>
 <p>The invoice is due in 30 days</p>

@@ -17,7 +17,7 @@ public class StatementPrinterTests {
         plays.put("as-like",  new ComedyPlay("As You Like It"));
         plays.put("othello",  new TragedyPlay("Othello"));
 
-        Invoice invoice = new Invoice(new Customer("1", "BigCo", 0), List.of(
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 103), List.of(
                 new Performance("hamlet", 55),
                 new Performance("as-like", 35),
                 new Performance("othello", 40)));
@@ -51,7 +51,7 @@ public class StatementPrinterTests {
         plays.put("as-like",  new ComedyPlay("As You Like It"));
         plays.put("othello",  new TragedyPlay("Othello"));
 
-        Invoice invoice = new Invoice(new Customer("1", "BigCo", 0), List.of(
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 135), List.of(
                 new Performance("hamlet", 30),
                 new Performance("as-like", 20),
                 new Performance("othello", 40)));
@@ -69,7 +69,25 @@ public class StatementPrinterTests {
         plays.put("as-like",  new ComedyPlay("As You Like It"));
         plays.put("othello",  new TragedyPlay("Othello"));
 
-        Invoice invoice = new Invoice(new Customer("1", "BigCo", 0), List.of(
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 136), List.of(
+                new Performance("hamlet", 30),
+                new Performance("as-like", 20),
+                new Performance("othello", 40)));
+
+        var result = invoice.print(plays, PrintFormat.HTML);
+
+        verify(result);
+    }
+
+    @Test
+    void exampleStatementHTMLNoDiscount() {
+
+        HashMap<String, Play> plays = new HashMap<>();
+        plays.put("hamlet",  new TragedyPlay("Hamlet"));
+        plays.put("as-like",  new ComedyPlay("As You Like It"));
+        plays.put("othello",  new TragedyPlay("Othello"));
+
+        Invoice invoice = new Invoice(new Customer("1", "BigCo", 135), List.of(
                 new Performance("hamlet", 30),
                 new Performance("as-like", 20),
                 new Performance("othello", 40)));
