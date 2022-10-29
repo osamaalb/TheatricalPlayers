@@ -40,36 +40,36 @@ public final class Invoice {
     }
   }
   private String printText(HashMap<String, Play> plays) {
-    String result = String.format("Statement for %s\n", this.customer);
+    StringBuffer result = new StringBuffer(String.format("Statement for %s\n", this.customer));
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
-      result += String.format(
+      result.append(String.format(
               "  %s: %s (%s seats)\n",
               play.name,
               frmt.format(play.getPrice(perf.audience) / 100),
               perf.audience
-      );
+      ));
     }
-    result += String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount / 100));
-    result += String.format("You earned %s credits\n", this.volumeCredits);
-    return result;
+    result.append(String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount / 100)));
+    result.append(String.format("You earned %s credits\n", this.volumeCredits));
+    return result.toString();
   }
 
   private String printHTML(HashMap<String, Play> plays) {
-    String result = String.format("<h3>Statement for %s</h3>\n", this.customer);
-    result += String.format("<ul>\n");
+    StringBuffer result = new StringBuffer(String.format("<h3>Statement for %s</h3>\n", this.customer));
+    result.append(String.format("<ul>\n"));
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
-      result += String.format(
+      result.append(String.format(
               "<li>%s: %s (%s seats)</li>\n",
               play.name,
               frmt.format(play.getPrice(perf.audience) / 100),
               perf.audience
-      );
+      ));
     }
-    result += String.format("</ul>\n");
-    result += String.format("<p>Amount owed is <strong>%s</strong></br>\n", frmt.format(this.totalInvoiceAmount / 100));
-    result += String.format("<p>You earned <strong>%s</strong> credits</p>\n", this.volumeCredits);
-    return result;
+    result.append(String.format("</ul>\n"));
+    result.append(String.format("<p>Amount owed is <strong>%s</strong></br>\n", frmt.format(this.totalInvoiceAmount / 100)));
+    result.append(String.format("<p>You earned <strong>%s</strong> credits</p>\n", this.volumeCredits));
+    return result.toString();
   }
 }
