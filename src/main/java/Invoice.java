@@ -6,7 +6,7 @@ public final class Invoice {
   public String customer;
   public List<Performance> performances;
 
-  private int totalInvoiceAmount;
+  private float totalInvoiceAmount;
 
   private int volumeCredits;
 
@@ -46,11 +46,11 @@ public final class Invoice {
       result.append(String.format(
               "  %s: %s (%s seats)\n",
               play.name,
-              frmt.format(play.getPrice(perf.audience) / 100),
+              frmt.format(play.getPrice(perf.audience)),
               perf.audience
       ));
     }
-    result.append(String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount / 100)));
+    result.append(String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount)));
     result.append(String.format("You earned %s credits\n", this.volumeCredits));
     return result.toString();
   }
@@ -63,12 +63,12 @@ public final class Invoice {
       result.append(String.format(
               "<li>%s: %s (%s seats)</li>\n",
               play.name,
-              frmt.format(play.getPrice(perf.audience) / 100),
+              frmt.format(play.getPrice(perf.audience)),
               perf.audience
       ));
     }
     result.append(String.format("</ul>\n"));
-    result.append(String.format("<p>Amount owed is <strong>%s</strong></br>\n", frmt.format(this.totalInvoiceAmount / 100)));
+    result.append(String.format("<p>Amount owed is <strong>%s</strong></br>\n", frmt.format(this.totalInvoiceAmount)));
     result.append(String.format("<p>You earned <strong>%s</strong> credits</p>\n", this.volumeCredits));
     return result.toString();
   }

@@ -7,7 +7,7 @@ public abstract class Play {
     this.name = name;
   }
 
-  public abstract int getPrice(int audience);
+  public abstract float getPrice(int audience);
 
   public abstract int getCredits(int audience);
 }

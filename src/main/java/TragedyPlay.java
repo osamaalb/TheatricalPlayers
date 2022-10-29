@@ -3,8 +3,8 @@ public final class TragedyPlay extends Play {
     this.name = name;
   }
 
-  public int getPrice(int audience) {
-    return 40000 + ((audience > 30) ? 1000 * (audience - 30) : 0);
+  public float getPrice(int audience) {
+    return 400 + ((audience > 30) ? 10 * (audience - 30) : 0);
   }
 
   public int getCredits(int audience) {
