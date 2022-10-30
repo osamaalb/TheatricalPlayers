@@ -1,81 +1,123 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TheatricalPlayers</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">import java.text.NumberFormat;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Invoice.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TheatricalPlayers</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Invoice.java</span></div><h1>Invoice.java</h1><pre class="source lang-java linenums">import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.*;
 
-public class Invoice {
+public final class Invoice {
 
-  private String customer;
-  private List&lt;Performance&gt; performances;
+  public Customer customer;
+  public List&lt;Performance&gt; performances;
 
-  private List&lt;InvoiceItem&gt; invoiceItems;
-
-  private int totalInvoiceAmount;
+  private float totalInvoiceAmount;
 
   private int volumeCredits;
+  private float fidelityDiscount;
 
-<span class="nc" id="L15">  public Invoice(String customer, List&lt;Performance&gt; performances) {</span>
-<span class="nc" id="L16">    this.customer = customer;</span>
-<span class="nc" id="L17">    this.performances = performances;</span>
-<span class="nc" id="L18">  }</span>
+<span class="fc" id="L16">  final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);</span>
 
-  public void CalculateInvoice(HashMap&lt;String, Play&gt; plays) {
-<span class="nc" id="L21">    this.volumeCredits = 0;</span>
-<span class="nc" id="L22">    this.totalInvoiceAmount = 0;</span>
-<span class="nc" id="L23">    this.invoiceItems = new ArrayList&lt;InvoiceItem&gt;();</span>
-<span class="nc bnc" id="L24" title="All 2 branches missed.">    for (Performance perf : this.performances) {</span>
-<span class="nc" id="L25">      Play play = plays.get(perf.playID);</span>
-<span class="nc" id="L26">      int thisAmount = 0;</span>
+<span class="fc" id="L18">  public Invoice(Customer customer, List&lt;Performance&gt; performances) {</span>
+<span class="fc" id="L19">    this.customer = customer;</span>
+<span class="fc" id="L20">    this.performances = performances;</span>
+<span class="fc" id="L21">  }</span>
 
-<span class="nc bnc" id="L28" title="All 3 branches missed.">      switch (play.type) {</span>
-        case &quot;tragedy&quot;:
-<span class="nc" id="L30">          thisAmount = 40000;</span>
-<span class="nc bnc" id="L31" title="All 2 branches missed.">          if (perf.audience &gt; 30) {</span>
-<span class="nc" id="L32">            thisAmount += 1000 * (perf.audience - 30);</span>
-          }
-          break;
-        case &quot;comedy&quot;:
-<span class="nc" id="L36">          thisAmount = 30000;</span>
-<span class="nc bnc" id="L37" title="All 2 branches missed.">          if (perf.audience &gt; 20) {</span>
-<span class="nc" id="L38">            thisAmount += 10000 + 500 * (perf.audience - 20);</span>
-          }
-<span class="nc" id="L40">          thisAmount += 300 * perf.audience;</span>
-<span class="nc" id="L41">          break;</span>
-        default:
-<span class="nc" id="L43">          throw new Error(&quot;unknown type: ${play.type}&quot;);</span>
-      }
+  public String print(HashMap&lt;String, Play&gt; plays, PrintFormat format) {
+<span class="fc" id="L24">    this.calculateInvoice(plays);</span>
+<span class="pc bpc" id="L25" title="1 of 3 branches missed.">    switch (format) {</span>
+      case TEXT:
+<span class="fc" id="L27">        return this.printText(plays);</span>
+      case HTML:
+<span class="fc" id="L29">        return this.printHTML(plays);</span>
+      default:
+<span class="nc" id="L31">        throw new Error(&quot;unknown print format: ${format}&quot;);</span>
+    }
+  }
+  private void calculateInvoice(HashMap&lt;String, Play&gt; plays) {
+<span class="fc" id="L35">    this.volumeCredits = 0;</span>
+<span class="fc" id="L36">    this.totalInvoiceAmount = 0;</span>
+<span class="fc" id="L37">    this.fidelityDiscount = 0;</span>
 
-<span class="nc" id="L46">      invoiceItems.add(new InvoiceItem(play.name, thisAmount, perf.audience));</span>
-      // add volume credits
-<span class="nc" id="L48">      volumeCredits += Math.max(perf.audience - 30, 0);</span>
-      // add extra credit for every ten comedy attendees
-<span class="nc bnc" id="L50" title="All 2 branches missed.">      if (&quot;comedy&quot;.equals(play.type)) {</span>
-<span class="nc" id="L51">        volumeCredits += Math.floor(perf.audience / 5);</span>
-      }
+<span class="fc bfc" id="L39" title="All 2 branches covered.">    for (Performance perf : this.performances) {</span>
+<span class="fc" id="L40">      final Play play = plays.get(perf.playID);</span>
+<span class="fc" id="L41">      volumeCredits += play.getCredits(perf.audience);</span>
+<span class="fc" id="L42">      totalInvoiceAmount += play.getPrice(perf.audience);</span>
+<span class="fc" id="L43">    }</span>
 
-<span class="nc" id="L54">      totalInvoiceAmount += thisAmount;</span>
-<span class="nc" id="L55">    }</span>
-<span class="nc" id="L56">  }</span>
-  public String printText() {
-<span class="nc" id="L58">    String result = String.format(&quot;Statement for %s\n&quot;, this.customer);</span>
-<span class="nc" id="L59">    final NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);</span>
-<span class="nc bnc" id="L60" title="All 2 branches missed.">    for (InvoiceItem invoiceItem : this.invoiceItems){</span>
-<span class="nc" id="L61">      result += String.format(&quot;  %s: %s (%s seats)\n&quot;, invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);</span>
-<span class="nc" id="L62">    }</span>
-<span class="nc" id="L63">    result += String.format(&quot;Amount owed is %s\n&quot;, frmt.format(this.totalInvoiceAmount / 100));</span>
-<span class="nc" id="L64">    result += String.format(&quot;You earned %s credits\n&quot;, this.volumeCredits);</span>
-<span class="nc" id="L65">    return result;</span>
+<span class="fc" id="L45">    this.customer.creditsBalance += volumeCredits;</span>
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">    if (this.customer.creditsBalance &gt;= 150) {</span>
+<span class="fc" id="L48">      fidelityDiscount = 15;</span>
+<span class="fc" id="L49">      totalInvoiceAmount -= fidelityDiscount;</span>
+<span class="fc" id="L50">      this.customer.creditsBalance -= 150;</span>
+    }
+<span class="fc" id="L52">  }</span>
+  private String printText(HashMap&lt;String, Play&gt; plays) {
+<span class="fc" id="L54">    String result = &quot;&quot;;</span>
+    try {
+<span class="fc" id="L56">      result = Files.readString(Paths.get(getClass().getResource(&quot;InvoiceTemplates\\TextTemplate.txt&quot;).toURI()));</span>
+<span class="nc" id="L57">    } catch (Exception e) {</span>
+<span class="nc" id="L58">      throw new Error(&quot;Cannot read invoice template&quot;);</span>
+<span class="fc" id="L59">    }</span>
+
+<span class="fc" id="L61">    StringBuffer invoiceItems = new StringBuffer();</span>
+<span class="fc bfc" id="L62" title="All 2 branches covered.">    for (Performance perf : this.performances) {</span>
+<span class="fc" id="L63">      final Play play = plays.get(perf.playID);</span>
+<span class="fc" id="L64">      invoiceItems.append(String.format(</span>
+              &quot;\n  %s: %s (%s seats)&quot;,
+              play.name,
+<span class="fc" id="L67">              frmt.format(play.getPrice(perf.audience)),</span>
+<span class="fc" id="L68">              perf.audience</span>
+      ));
+<span class="fc" id="L70">    }</span>
+<span class="fc" id="L71">    result = result.replace(&quot;{@Customer_Name}&quot;, this.customer.name);</span>
+<span class="fc" id="L72">    result = result.replace(&quot;{@Invoice_Items}&quot;, invoiceItems.toString());</span>
+<span class="fc" id="L73">    result = result.replace(&quot;{@Invoice_Amount}&quot;, frmt.format(this.totalInvoiceAmount));</span>
+<span class="fc" id="L74">    result = result.replace(&quot;{@Total_Credits}&quot;, Integer.toString(this.volumeCredits));</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">    if (this.fidelityDiscount &gt; 0) {</span>
+<span class="fc" id="L76">      result = result.replace(&quot;{@Fidelity_Discount}&quot;, String.format(&quot;\nYou earned a fidelity discount of %s&quot;, frmt.format(this.fidelityDiscount)));</span>
+    } else {
+<span class="fc" id="L78">      result = result.replace(&quot;{@Fidelity_Discount}&quot;, &quot;&quot;);</span>
+    }
+<span class="fc" id="L80">    result = result.replace(&quot;{@Accumulated_Credits}&quot;, Integer.toString(this.customer.creditsBalance));</span>
+<span class="fc" id="L81">    return result;</span>
   }
 
-  public String printHTML() {
-<span class="nc" id="L69">    String result = String.format(&quot;&lt;h3&gt;Statement for %s&lt;/h3&gt;\n&quot;, this.customer);</span>
-<span class="nc" id="L70">    result += String.format(&quot;&lt;ul&gt;\n&quot;);</span>
-<span class="nc" id="L71">    NumberFormat frmt = NumberFormat.getCurrencyInstance(Locale.US);</span>
-<span class="nc bnc" id="L72" title="All 2 branches missed.">    for (InvoiceItem invoiceItem : this.invoiceItems){</span>
-<span class="nc" id="L73">      result += String.format(&quot;&lt;li&gt;%s: %s (%s seats)&lt;/li&gt;\n&quot;, invoiceItem.name, frmt.format(invoiceItem.amount / 100), invoiceItem.audience);</span>
-<span class="nc" id="L74">    }</span>
-<span class="nc" id="L75">    result += String.format(&quot;&lt;/ul&gt;\n&quot;);</span>
-<span class="nc" id="L76">    result += String.format(&quot;&lt;p&gt;Amount owed is &lt;strong&gt;%s&lt;/strong&gt;&lt;/br&gt;\n&quot;, frmt.format(this.totalInvoiceAmount / 100));</span>
-<span class="nc" id="L77">    result += String.format(&quot;&lt;p&gt;You earned &lt;strong&gt;%s&lt;/strong&gt; credits&lt;/p&gt;\n&quot;, this.volumeCredits);</span>
-<span class="nc" id="L78">    return result;</span>
+  private String printHTML(HashMap&lt;String, Play&gt; plays) {
+<span class="fc" id="L85">    String result = &quot;&quot;;</span>
+    try {
+<span class="fc" id="L87">      result = Files.readString(Paths.get(getClass().getResource(&quot;InvoiceTemplates\\HTMLTemplate.html&quot;).toURI()));</span>
+<span class="nc" id="L88">    } catch (Exception e) {</span>
+<span class="nc" id="L89">      throw new Error(&quot;Cannot read invoice template&quot;);</span>
+<span class="fc" id="L90">    }</span>
+
+<span class="fc" id="L92">    StringBuffer invoiceItems = new StringBuffer();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">    for (Performance perf : this.performances) {</span>
+<span class="fc" id="L94">      final Play play = plays.get(perf.playID);</span>
+<span class="fc" id="L95">      invoiceItems.append(String.format(</span>
+              &quot;&lt;tr&gt;\n&quot;
+              + &quot;&lt;td&gt;%s&lt;/td&gt;\n&quot;
+              + &quot;&lt;td&gt;%s&lt;/td&gt;\n&quot;
+              + &quot;&lt;td&gt;%s&lt;/td&gt;\n&quot;
+              + &quot;&lt;/tr&gt;\n&quot;,
+              play.name,
+<span class="fc" id="L102">              perf.audience,</span>
+<span class="fc" id="L103">              frmt.format(play.getPrice(perf.audience))</span>
+      ));
+<span class="fc" id="L105">    }</span>
+
+<span class="fc" id="L107">    result = result.replace(&quot;{@Customer_Name}&quot;, this.customer.name);</span>
+<span class="fc" id="L108">    result = result.replace(&quot;{@Invoice_Items}&quot;, invoiceItems.toString());</span>
+<span class="fc" id="L109">    result = result.replace(&quot;{@Invoice_Amount}&quot;, frmt.format(this.totalInvoiceAmount));</span>
+<span class="fc" id="L110">    result = result.replace(&quot;{@Total_Credits}&quot;, Integer.toString(this.volumeCredits));</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    if (this.fidelityDiscount &gt; 0) {</span>
+<span class="fc" id="L112">      result = result.replace(&quot;{@Fidelity_Discount}&quot;, String.format(&quot;&lt;tr&gt;\n&quot;</span>
+              + &quot;&lt;td colspan=\&quot;2\&quot; style=\&quot;text-align: right;\&quot;&gt;&lt;strong&gt;Fidelity Discount:&lt;/strong&gt;&lt;/td&gt;\n&quot;
+              + &quot;&lt;td&gt;%s&lt;/td&gt;\n&quot;
+<span class="fc" id="L115">              + &quot;&lt;/tr&gt;&quot;, frmt.format(this.fidelityDiscount)));</span>
+    } else {
+<span class="fc" id="L117">      result = result.replace(&quot;{@Fidelity_Discount}&quot;, &quot;&quot;);</span>
+    }
+<span class="fc" id="L119">    result = result.replace(&quot;{@Accumulated_Credits}&quot;, Integer.toString(this.customer.creditsBalance));</span>
+<span class="fc" id="L120">    return result;</span>
   }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

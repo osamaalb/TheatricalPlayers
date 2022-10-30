@@ -1,0 +1,4 @@
+Statement for {@Customer_Name}{@Invoice_Items}{@Fidelity_Discount}
+Amount owed is {@Invoice_Amount}
+You earned {@Total_Credits} credits
+Your accumulated fidelity points are {@Accumulated_Credits}

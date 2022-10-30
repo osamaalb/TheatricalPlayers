@@ -51,23 +51,34 @@ public final class Invoice {
     }
   }
   private String printText(HashMap<String, Play> plays) {
-    StringBuffer result = new StringBuffer(String.format("Statement for %s\n", this.customer.name));
+    String result = "";
+    try {
+      result = Files.readString(Paths.get(getClass().getResource("InvoiceTemplates\\TextTemplate.txt").toURI()));
+    } catch (Exception e) {
+      throw new Error("Cannot read invoice template");
+    }
+
+    StringBuffer invoiceItems = new StringBuffer();
     for (Performance perf : this.performances) {
       final Play play = plays.get(perf.playID);
-      result.append(String.format(
-              "  %s: %s (%s seats)\n",
+      invoiceItems.append(String.format(
+              "\n  %s: %s (%s seats)",
               play.name,
               frmt.format(play.getPrice(perf.audience)),
               perf.audience
       ));
     }
+    result = result.replace("{@Customer_Name}", this.customer.name);
+    result = result.replace("{@Invoice_Items}", invoiceItems.toString());
+    result = result.replace("{@Invoice_Amount}", frmt.format(this.totalInvoiceAmount));
+    result = result.replace("{@Total_Credits}", Integer.toString(this.volumeCredits));
     if (this.fidelityDiscount > 0) {
-      result.append(String.format("You earned a fidelity discount of %s\n", frmt.format(this.fidelityDiscount)));
+      result = result.replace("{@Fidelity_Discount}", String.format("\nYou earned a fidelity discount of %s", frmt.format(this.fidelityDiscount)));
+    } else {
+      result = result.replace("{@Fidelity_Discount}", "");
     }
-    result.append(String.format("Amount owed is %s\n", frmt.format(this.totalInvoiceAmount)));
-    result.append(String.format("You earned %s credits\n", this.volumeCredits));
-    result.append(String.format("Your accumulated fidelity points are %s\n", this.customer.creditsBalance));
-    return result.toString();
+    result = result.replace("{@Accumulated_Credits}", Integer.toString(this.customer.creditsBalance));
+    return result;
   }
 
   private String printHTML(HashMap<String, Play> plays) {
